@@ -143,7 +143,7 @@
       var board = this.rows();
       var counter = 0;
       for (var i = 0; i < board.length; i++) {
-        if (board[i][i + majorDiagonalColumnIndexAtFirstRow] === 1) {
+        if (board[i][majorDiagonalColumnIndexAtFirstRow + i] === 1) {
           counter++;
         }
       }
