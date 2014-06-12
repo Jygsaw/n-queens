@@ -14,14 +14,7 @@
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
 window.findNRooksSolution = function(n) {
-  var solution = [];
-  var rows = [];
-  for (var i = 0; i < n; i++) {
-    rows[i] = 0;
-  }
-  for (var i = 0; i < n; i++) {
-    solution[i] = rows.concat();
-  }
+  var solution = window.buildBoard(n);
   for (var i = 0; i < n; i++) {
     solution[i][i] = 1;
   }
@@ -56,8 +49,83 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = 0;
+
+  var placeNewQueen = function(row, ld, col, rd) {
+
+console.log("===== PLACE NEW QUEEN =====");
+console.log("row: " + row);
+console.log("ld: " + ld);
+console.log("rd: " + rd);
+console.log("col: ", col);
+
+    // calculate poss
+    var pos = '';
+    for (var i = 0; i < col.length; i++) {
+      if (row > 1) {
+        if (col[i] === '1' || ld[i] === '1' || rd[i] === '1') {
+          pos += '0';
+        }
+        else {
+          pos += '1';
+        }
+      }
+      else {
+        pos += "0";
+      }
+    }
+
+    console.log("pos:", pos);
+          // // check poss for next level
+          // if (new poss != crap) {
+          //    recurse with ld, col, rd, new poss
+          // }
+
+    if (n === row) {
+      solutionCount++;
+    } else {
+      // iterate through good poss
+      for (var i = 0; i < poss.length; i++) {
+        if (poss[i] === '0') {
+          // create column mask
+          var newCol = col.split('');
+          newCol[i] = 1;
+          newCol = newCol.join();
+
+          // create ld mask
+          var newLd = ld.split('');
+          newLd[i] = 1;
+
+          newLd = newLd.join();
+
+
+          var newRd = rd.split('');
+          newRd[i] = 1;
+
+          newRd = newRd.join();
+
+          // shift diagonal masks
+
+          // recurse with new masks
+//          placeNewQueen(row + 1, newCol, newLd, newRd);
+        }
+      }
+    }
+  };
+
+  var baseMask = "00000000";
+  placeNewQueen(1, baseMask, baseMask, baseMask);
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+
   return solutionCount;
+};
+
+window.buildBoard = function (n) {
+  var solution = [];
+  var rows = Array(n + 1).join('0').split();
+  for (var i = 0; i < n; i++) {
+    solution[i] = rows.concat();
+  }
+  return solution;
 };
