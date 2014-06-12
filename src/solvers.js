@@ -40,17 +40,11 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  // console.log(">>>>> FINDING *" + n + "*QUEENS <<<<<");
   var solution = window.buildBoard(n);
 
 
   var placeNewQueen = function(row, ld, col, rd) {
 
-// console.log("===== PLACE NEW QUEEN =====");
-// console.log("row: " + row);
-// console.log("ld: " + ld);
-// console.log("rd: " + rd);
-// console.log("col: ", col);
 
     // calculate poss
     var poss = '';
@@ -67,8 +61,6 @@ window.findNQueensSolution = function(n) {
         poss += '0';
       }
     }
-    // TODO remove debugging
-    // console.log("poss:", poss);
 
     // convert poss into number
     // if poss === 0, then no more moves
@@ -85,36 +77,25 @@ window.findNQueensSolution = function(n) {
       return true;
     } else {
       // iterate through good poss
-      // console.log("Here", poss);
       for (var i = 0; i < poss.length; i++) {
         if (poss[i] === '1' || row === 1 && poss[i] === '0') {
-// console.log(">> Placing Queen at poss i: " + i);
           // create column mask
-// console.log("===== COLUMN CHECK ======")
           var newCol = col.split('');
-// console.log("= pre: " + newCol);
           newCol[i] = 1;
           newCol = newCol.join('');
-// console.log("= post: " + newCol);
           // create ld mask by shifting bits
           var newLd = ld.split('');
           newLd[i] = 1;
-// console.log("=== shifting LD ===");
-// console.log("= pre: " + newLd);
           newLd.shift();
           newLd.push('0');
           newLd = newLd.join('');
-// console.log("= post: " + newLd);
 
           // create rd mask by shifting bits
           var newRd = rd.split('');
           newRd[i] = 1;
-// console.log("=== shifting RD ===");
-// console.log("= pre: " + newRd);
           newRd.unshift(0);
           newRd.pop();
           newRd = newRd.join('');
-// console.log("= pre: " + newRd);
 
           // recurse with new masks
           if (placeNewQueen(row + 1, newLd, newCol, newRd)) {
@@ -135,7 +116,7 @@ window.findNQueensSolution = function(n) {
     placeNewQueen(1, baseMask, baseMask, baseMask);
   }
 
-  // console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
 
   return solution;
 };
@@ -143,74 +124,41 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  // console.log(">>>>> COUNTING *" + n + "*QUEENS <<<<<");
   var solutionCount = 0;
   var placeNewQueen = function(row, ld, col, rd) {
-console.log("===== PLACE NEW QUEEN =====");
-console.log("row: " + row);
-console.log("ld: " + ld);
-console.log("col: ", col);
-console.log("rd: " + rd);
 
     // calculate poss
-    var poss = '';
-    for (var i = 0; i < col.length; i++) {
-      if (row > 1) {
-        if (col[i] === '1' || ld[i] === '1' || rd[i] === '1') {
-          poss += '0';
-        }
-        else {
-          poss += '1';
-        }
-      }
-      else {
-        poss += "0";
-      }
-    }
-    // TODO remove debugging
-    // console.log("poss:", poss);
+    var poss = (col | ld | rd);
+    var mask = Math.pow(2, n) - 1;
+    poss = poss ^ mask;
 
     // convert poss into number
     // if poss === 0, then no more moves
-    var possNum = parseInt(poss, 2);
-    if (possNum === 0 && row !== 1) {
+    if (!poss && row !== 1) {
+      // console.log("ABORT: NO MORE POSITIONS!!!")
       return;
     }
+
+    // solution found if n === row
     if (n === row) {
       solutionCount++;
       return;
     } else {
-      // iterate through good poss
-      // console.log("Here", poss);
-      for (var i = 0; i < poss.length; i++) {
-        if (poss[i] === '1' || row === 1 && poss[i] === '0') {
-// console.log(">> Placing Queen at poss i: " + i);
+      // brute force board position
+      for (var i = 0; i < n; i++) {
+        var binaryIndex = Math.pow(2, i);
+        if (poss & binaryIndex) {
           // create column mask
-// console.log("===== COLUMN CHECK ======")
-          var newCol = col.split('');
-// console.log("= pre: " + newCol);
-          newCol[i] = 1;
-          newCol = newCol.join('');
-// console.log("= post: " + newCol);
+          var newCol = col | binaryIndex;
+
           // create ld mask by shifting bits
-          var newLd = ld.split('');
-          newLd[i] = 1;
-// console.log("=== shifting LD ===");
-// console.log("= pre: " + newLd);
-          newLd.shift();
-          newLd.push('0');
-          newLd = newLd.join('');
-// console.log("= post: " + newLd);
+          var newLd = ld | binaryIndex;
+          newLd =  newLd << 1;
+          newLd = newLd & mask;
 
           // create rd mask by shifting bits
-          var newRd = rd.split('');
-          newRd[i] = 1;
-// console.log("=== shifting RD ===");
-// console.log("= pre: " + newRd);
-          newRd.unshift(0);
-          newRd.pop();
-          newRd = newRd.join('');
-// console.log("= pre: " + newRd);
+          var newRd = rd | binaryIndex;
+          newRd = newRd >> 1;
 
           // recurse with new masks
           placeNewQueen(row + 1, newLd, newCol, newRd);
@@ -219,20 +167,15 @@ console.log("rd: " + rd);
     }
   };
 
-  var baseMask = '';
-  for (var i = 0; i < n; i++) {
-    baseMask += "0";
-  }
-
   if (n > 0) {
     var start = new Date().getTime();
-    placeNewQueen(1, baseMask, baseMask, baseMask);
-    console.log("Time for " + n + " queens: ", new Date().getTime() - start);
+    placeNewQueen(1, 0, 0, 0);
+    console.log('Time for ' + n + ' queens: ', new Date().getTime() - start);
   }
   else {
     solutionCount++;
   }
-  // console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
 
   return solutionCount;
 };
