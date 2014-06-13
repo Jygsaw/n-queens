@@ -19,7 +19,7 @@ window.findNRooksSolution = function(n) {
     solution[i][i] = 1;
   }
 
-  // console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
+  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
 };
 
@@ -32,7 +32,7 @@ window.countNRooksSolutions = function(n) {
     solutionCount *= i;
   }
 
-  // console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
+  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
 
@@ -42,10 +42,7 @@ window.countNRooksSolutions = function(n) {
 window.findNQueensSolution = function(n) {
   var solution = window.buildBoard(n);
 
-
   var placeNewQueen = function(row, ld, col, rd) {
-
-
     // calculate poss
     var poss = '';
     for (var i = 0; i < col.length; i++) {
@@ -135,7 +132,6 @@ window.countNQueensSolutions = function(n) {
     // convert poss into number
     // if poss === 0, then no more moves
     if (!poss && row !== 1) {
-      // console.log("ABORT: NO MORE POSITIONS!!!")
       return;
     }
 
